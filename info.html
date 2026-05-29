@@ -105,7 +105,7 @@
                         document.getElementById('detail-address').innerText = passedAddress;
                     }
 
-                    // 🗺️ SECURE PUBLIC GOOGLE EMBED MAP GENERATION ENDPOINT
+                                        // 🗺️ SECURE PUBLIC GOOGLE EMBED MAP GENERATION ENDPOINT
                     const finalAddress = document.getElementById('detail-address').innerText;
                     if (finalAddress && finalAddress !== '-') {
                         const encodedAddress = encodeURIComponent(finalAddress);
@@ -117,7 +117,7 @@
                                 allowfullscreen
                                 loading="lazy"
                                 referrerpolicy="no-referrer-when-downgrade"
-                                src="https://google.com{encodedAddress}&t=&z=14&ie=UTF8&iwloc=B&output=embed">
+                                src="https://maps.google.com/maps?q=${encodedAddress}&t=&z=14&ie=UTF8&iwloc=B&output=embed">
                             </iframe>`;
                     } else {
                         document.getElementById('map-container').innerHTML = `<div style="padding:20px; text-align:center; color:#666;">No valid address found to map.</div>`;
