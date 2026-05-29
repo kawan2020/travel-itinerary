@@ -42,6 +42,7 @@
         document.addEventListener("DOMContentLoaded", () => {
             const urlParams = new URLSearchParams(window.location.search);
             const itemId = urlParams.get('id');
+            const passedAddress = urlParams.get('address'); 
 
             if (!itemId) {
                 document.getElementById('detail-name').innerText = "No item selected.";
@@ -56,7 +57,6 @@
                     const data = new Uint8Array(buffer);
                     const workbook = XLSX.read(data, { type: 'array' });
                     
-                    // Universal search engine across ALL tabs
                     const tabs = ['Transportation', 'Accommodation', 'Activities'];
                     let found = false;
 
@@ -68,7 +68,6 @@
                         while (true) {
                             if (!sheet[`A${rowIndex}`]) break;
 
-                            // Dynamic column detection for Reference Link ID (Checks columns F, G, or H)
                             let refId = '';
                             if (tabName === 'Transportation') refId = sheet[`H${rowIndex}`]?.v;
                             if (tabName === 'Accommodation') refId = sheet[`F${rowIndex}`]?.v;
@@ -79,7 +78,7 @@
                                 if (tabName === 'Transportation') {
                                     document.getElementById('detail-name').innerText = sheet[`D${rowIndex}`]?.v || 'Transport';
                                     document.getElementById('detail-type').innerText = sheet[`C${rowIndex}`]?.v || '-';
-                                    document.getElementById('detail-address').innerText = sheet[`E${rowIndex}`]?.v || 'Airport/Station';
+                                    document.getElementById('detail-address').innerText = passedAddress || sheet[`E${rowIndex}`]?.v || 'Airport/Station';
                                     document.getElementById('detail-ref').innerText = sheet[`G${rowIndex}`]?.v || '-';
                                 } else if (tabName === 'Accommodation') {
                                     document.getElementById('detail-name').innerText = sheet[`B${rowIndex}`]?.v || 'Hotel';
@@ -89,7 +88,7 @@
                                 } else if (tabName === 'Activities') {
                                     document.getElementById('detail-name').innerText = sheet[`C${rowIndex}`]?.v || 'Activity';
                                     document.getElementById('detail-type').innerText = "Scheduled Event";
-                                    document.getElementById('detail-address').innerText = sheet[`D${rowIndex}`]?.v || '-';
+                                    document.getElementById('detail-address').innerText = passedAddress || sheet[`D${rowIndex}`]?.v || '-';
                                     document.getElementById('detail-ref').innerText = sheet[`E${rowIndex}`]?.v || '-';
                                 }
 
