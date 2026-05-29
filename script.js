@@ -1,48 +1,31 @@
-(function() {
-    // 1. Core initialization block
-    function initItineraryApp() {
-        const excelUrl = window.location.pathname.endsWith('/') 
-            ? 'Data/itinerary.xlsx' 
-            : './Data/itinerary.xlsx';
+document.addEventListener("DOMContentLoaded", () => {
+    // Automatically calculate the correct path on GitHub Pages
+    const excelUrl = window.location.pathname.endsWith('/') 
+        ? 'Data/itinerary.xlsx' 
+        : './Data/itinerary.xlsx';
 
-        fetch(excelUrl)
-            .then(response => {
-                if (!response.ok) throw new Error("Excel file not found at " + excelUrl);
-                return response.arrayBuffer();
-            })
-            .then(buffer => {
-                const data = new Uint8Array(buffer);
-                const workbook = XLSX.read(data, { type: 'array', cellDates: true, cellNF: true });
-                
-                parseSummaryTab(workbook);
-                parseHorizontalTab(workbook, 'Transportation', 'table-transportation', 8);
-                parseHorizontalTab(workbook, 'Accommodation', 'table-accommodation', 6);
-                parseHorizontalTab(workbook, 'Activities', 'table-activities', 6);
-                parseHorizontalTab(workbook, 'Contact', 'table-contact', 7);
-                parseOtherInfoTab(workbook);
-            })
-            .catch(err => {
-                console.error("Initialization Error:", err);
-                document.body.insertAdjacentHTML('afterbegin', `<div style="background:#ffdddd; color:#990000; padding:15px; text-align:center; font-weight:bold; margin-bottom:10px;">Loading Failed: ${err.message}</div>`);
-            });
-    }
-
-    // 2. Safe Dynamic Script Loader Engine
-    if (typeof XLSX === 'undefined') {
-        const cdnScript = document.createElement('script');
-        cdnScript.src = "https://jsdelivr.net";
-        cdnScript.onload = () => {
-            // Run app only after confirming library is fully ready in global window memory
-            if (typeof XLSX !== 'undefined') initItineraryApp();
-        };
-        cdnScript.onerror = () => {
-            document.body.insertAdjacentHTML('afterbegin', `<div style="background:#ffdddd; color:#990000; padding:15px; text-align:center; font-weight:bold; margin-bottom:10px;">Network Error: Failed to download SheetJS parser library.</div>`);
-        };
-        document.head.appendChild(cdnScript);
-    } else {
-        initItineraryApp();
-    }
-})();
+    fetch(excelUrl)
+        .then(response => {
+            if (!response.ok) throw new Error("Excel file not found at " + excelUrl);
+            return response.arrayBuffer();
+        })
+        .then(buffer => {
+            const data = new Uint8Array(buffer);
+            // Read file using the locally hosted library
+            const workbook = XLSX.read(data, { type: 'array', cellDates: true, cellNF: true });
+            
+            parseSummaryTab(workbook);
+            parseHorizontalTab(workbook, 'Transportation', 'table-transportation', 8);
+            parseHorizontalTab(workbook, 'Accommodation', 'table-accommodation', 6);
+            parseHorizontalTab(workbook, 'Activities', 'table-activities', 6);
+            parseHorizontalTab(workbook, 'Contact', 'table-contact', 7);
+            parseOtherInfoTab(workbook);
+        })
+        .catch(err => {
+            console.error("Initialization Error:", err);
+            document.body.insertAdjacentHTML('afterbegin', `<div style="background:#ffdddd; color:#990000; padding:15px; text-align:center; font-weight:bold; margin-bottom:10px;">Loading Failed: ${err.message}</div>`);
+        });
+});
 
 function parseSummaryTab(workbook) {
     const sheet = workbook.Sheets['Summary'];
@@ -98,8 +81,6 @@ function parseOtherInfoTab(workbook) {
 
 function formatCellText(cell) {
     if (!cell || cell.v === undefined || cell.v === '') return '-';
-    
-    // Smooth parsing filter for Excel Date serial stamps vs strings
     if (cell.v instanceof Date) {
         try {
             return cell.v.toISOString().split('T')[0];
