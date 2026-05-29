@@ -14,19 +14,33 @@ body {
     box-shadow: 0 4px 8px rgba(0,0,0,0.05);
 }
 
+/* New Branding Logo Header Layout */
+.branding-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.company-logo {
+    height: 50px;
+    width: auto;
+    object-fit: contain;
+}
+
+.company-name {
+    font-size: 24px;
+    font-weight: bold;
+    color: #1a446c;
+    letter-spacing: 0.5px;
+}
+
 header {
     display: flex;
     justify-content: space-between;
     border-bottom: 3px solid #1a446c;
     padding-bottom: 15px;
     margin-bottom: 30px;
-}
-
-h1 {
-    color: #1a446c;
-    margin: 0 0 10px 0;
-    font-size: 28px;
-    letter-spacing: 1px;
 }
 
 .section-title {
@@ -71,10 +85,12 @@ th {
     background-color: #1a446c;
 }
 
+/* Fixed Multi-Line Processing Text Container */
 .other-info-box {
     border: 1px solid #b1c4d4;
     padding: 15px;
     min-height: 50px;
     background: #fafafa;
     font-size: 14px;
+    white-space: pre-line; /* Respects Excel multi-line breaks */
 }

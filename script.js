@@ -1,18 +1,15 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // Automatically calculate the correct path on GitHub Pages
-    const excelUrl = window.location.pathname.endsWith('/') 
-        ? 'Data/itinerary.xlsx' 
-        : './Data/itinerary.xlsx';
+    const excelUrl = './Data/itinerary.xlsx';
 
     fetch(excelUrl)
         .then(response => {
-            if (!response.ok) throw new Error("Excel file not found at " + excelUrl);
+            if (!response.ok) throw new Error("Excel file not found");
             return response.arrayBuffer();
         })
         .then(buffer => {
             const data = new Uint8Array(buffer);
-            // Read file using the locally hosted library
-            const workbook = XLSX.read(data, { type: 'array', cellDates: true, cellNF: true });
+            // cellDates: false forces Excel to pass raw string text formats, fixing time zone drops
+            const workbook = XLSX.read(data, { type: 'array', cellDates: false });
             
             parseSummaryTab(workbook);
             parseHorizontalTab(workbook, 'Transportation', 'table-transportation', 8);
@@ -22,20 +19,19 @@ document.addEventListener("DOMContentLoaded", () => {
             parseOtherInfoTab(workbook);
         })
         .catch(err => {
-            console.error("Initialization Error:", err);
-            document.body.insertAdjacentHTML('afterbegin', `<div style="background:#ffdddd; color:#990000; padding:15px; text-align:center; font-weight:bold; margin-bottom:10px;">Loading Failed: ${err.message}</div>`);
+            console.error("Error:", err);
         });
 });
 
 function parseSummaryTab(workbook) {
     const sheet = workbook.Sheets['Summary'];
     if (!sheet) return;
-    const getVal = (cellName) => (sheet[cellName] && sheet[cellName].v !== undefined) ? sheet[cellName].v : '-';
     
-    document.getElementById('summary-trip-type').innerText = getVal('B3');
-    document.getElementById('summary-dest').innerText = getVal('B4');
-    document.getElementById('summary-start').innerText = formatCellText(sheet['B5']);
-    document.getElementById('summary-end').innerText = formatCellText(sheet['B6']);
+    // Grabs raw displayed values directly from cells to prevent calendar shifting
+    document.getElementById('summary-trip-type').innerText = sheet['B3']?.w || sheet['B3']?.v || '-';
+    document.getElementById('summary-dest').innerText = sheet['B4']?.w || sheet['B4']?.v || '-';
+    document.getElementById('summary-start').innerText = sheet['B5']?.w || sheet['B5']?.v || '-';
+    document.getElementById('summary-end').innerText = sheet['B6']?.w || sheet['B6']?.v || '-';
 }
 
 function parseHorizontalTab(workbook, sheetName, tableId, totalColumns) {
@@ -48,13 +44,13 @@ function parseHorizontalTab(workbook, sheetName, tableId, totalColumns) {
     let rowIndex = 4; 
     while (true) {
         let primaryKey = `A${rowIndex}`;
-        if (!sheet[primaryKey] || sheet[primaryKey].v === undefined || String(sheet[primaryKey].v).trim() === '') break; 
+        if (!sheet[primaryKey] || sheet[primaryKey].v === undefined) break; 
 
         let rowHtml = "<tr>";
         for (let colIndex = 0; colIndex < totalColumns; colIndex++) {
             let colLetter = XLSX.utils.encode_col(colIndex);
             let cell = sheet[`${colLetter}${rowIndex}`];
-            let val = formatCellText(cell);
+            let val = cell?.w || cell?.v || '-';
 
             if (colIndex === (totalColumns - 1)) {
                 if (val && val !== '-') {
@@ -74,19 +70,7 @@ function parseHorizontalTab(workbook, sheetName, tableId, totalColumns) {
 
 function parseOtherInfoTab(workbook) {
     const sheet = workbook.Sheets['Other Info'];
-    if (sheet && sheet['A4'] && sheet['A4'].v !== undefined) {
-        document.getElementById('other-info-content').innerText = sheet['A4'].v;
+    if (sheet && sheet['A4']) {
+        document.getElementById('other-info-content').innerText = sheet['A4'].w || sheet['A4'].v || '-';
     }
-}
-
-function formatCellText(cell) {
-    if (!cell || cell.v === undefined || cell.v === '') return '-';
-    if (cell.v instanceof Date) {
-        try {
-            return cell.v.toISOString().split('T')[0];
-        } catch(e) {
-            return cell.w ? cell.w : String(cell.v);
-        }
-    }
-    return cell.w ? cell.w : cell.v;
 }
