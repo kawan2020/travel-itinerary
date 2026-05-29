@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Itinerary</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- SheetJS Library to read Excel files -->
+    <script src="https://jsdelivr.net"></script>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Header / Summary Section -->
+        <header>
+            <div class="header-left">
+                <h1 id="company-name">TRAVEL ITINERARY</h1>
+                <p><strong>Trip Type:</strong> <span id="summary-trip-type">-</span></p>
+                <p><strong>Destination:</strong> <span id="summary-dest">-</span></p>
+            </div>
+            <div class="header-right">
+                <p><strong>Trip Start:</strong> <span id="summary-start">-</span></p>
+                <p><strong>Trip End:</strong> <span id="summary-end">-</span></p>
+            </div>
+        </header>
+
+        <!-- 1. Transportation Section -->
+        <section>
+            <h2 class="section-title">1. TRANSPORTATION</h2>
+            <div class="table-responsive">
+                <table id="table-transportation"><thead><tr><th>Date</th><th>Time</th><th>Transport Type</th><th>Carrier / Service</th><th>Departure</th><th>Arrival</th><th>Booking Ref.</th><th>Reference Link</th></tr></thead><tbody></tbody></table>
+            </div>
+        </section>
+
+        <!-- 2. Accommodation Section -->
+        <section>
+            <h2 class="section-title">2. ACCOMMODATION</h2>
+            <div class="table-responsive">
+                <table id="table-accommodation"><thead><tr><th>Date</th><th>Hotel Name</th><th>Address</th><th>City</th><th>Booking Ref.</th><th>Reference Link</th></tr></thead><tbody></tbody></table>
+            </div>
+        </section>
+
+        <!-- 3. Activities Section -->
+        <section>
+            <h2 class="section-title">3. ACTIVITIES</h2>
+            <div class="table-responsive">
+                <table id="table-activities"><thead><tr><th>Date</th><th>Time</th><th>Activities</th><th>Venue / Location</th><th>Remarks</th><th>Reference Link</th></tr></thead><tbody></tbody></table>
+            </div>
+        </section>
+
+        <!-- 4. Contact Section -->
+        <section>
+            <h2 class="section-title">4. CONTACT</h2>
+            <div class="table-responsive">
+                <table id="table-contact"><thead><tr><th>Name</th><th>Role / Title</th><th>Mobile number</th><th>Office number</th><th>email address</th><th>Country</th><th>Reference Link</th></tr></thead><tbody></tbody></table>
+            </div>
+        </section>
+
+        <!-- 5. Other Info Section -->
+        <section>
+            <h2 class="section-title">5. OTHER INFORMATION</h2>
+            <div id="other-info-content" class="other-info-box">-</div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
