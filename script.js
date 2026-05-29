@@ -11,19 +11,10 @@ document.addEventListener("DOMContentLoaded", () => {
             const workbook = XLSX.read(data, { type: 'array', cellDates: false });
             
             parseSummaryTab(workbook);
-            
-            // Transportation now reads 9 columns (A to I)
             parseHorizontalTab(workbook, 'Transportation', 'table-transportation', 9);
-            
-            // Accommodation stays standard at 6 columns (A to F)
             parseHorizontalTab(workbook, 'Accommodation', 'table-accommodation', 6);
-            
-            // Activities now reads 7 columns (A to G)
-            parseHorizontalTab(workbook, 'Activities', 'table-activities', 7);
-            
-            // Contact stays standard at 7 columns (A to G)
+            parseHorizontalTab(workbook, 'Activities', 'table-activities', 6); // Set to 6 columns
             parseHorizontalTab(workbook, 'Contact', 'table-contact', 7);
-            
             parseOtherInfoTab(workbook);
         })
         .catch(err => {
@@ -54,12 +45,11 @@ function parseHorizontalTab(workbook, sheetName, tableId, totalColumns) {
 
         let rowHtml = "<tr>";
         
-        // 🔍 DYNAMIC HIDDEN ADDRESS CAPTURE
         let hiddenAddressVal = '';
         if (sheetName === 'Transportation') {
             hiddenAddressVal = sheet[`I${rowIndex}`]?.w || sheet[`I${rowIndex}`]?.v || '';
         } else if (sheetName === 'Activities') {
-            hiddenAddressVal = sheet[`G${rowIndex}`]?.w || sheet[`G${rowIndex}`]?.v || '';
+            hiddenAddressVal = sheet[`D${rowIndex}`]?.w || sheet[`D${rowIndex}`]?.v || ''; // Target column D
         }
 
         for (let colIndex = 0; colIndex < totalColumns; colIndex++) {
@@ -67,11 +57,8 @@ function parseHorizontalTab(workbook, sheetName, tableId, totalColumns) {
             let cell = sheet[`${colLetter}${rowIndex}`];
             let val = cell?.w || cell?.v || '-';
 
-            // Skip rendering the hidden address columns onto the homepage table layout
-            if (sheetName === 'Transportation' && colIndex === 8) continue; // Skip Column I
-            if (sheetName === 'Activities' && colIndex === 6) continue;     // Skip Column G
+            if (sheetName === 'Transportation' && colIndex === 8) continue; 
 
-            // Generate clean button parameters matching the respective sheets
             if (colIndex === (totalColumns - 1) || (sheetName === 'Transportation' && colIndex === 7)) {
                 if (val && val !== '-') {
                     rowHtml += `<td><a href="info.html?id=${encodeURIComponent(val)}&address=${encodeURIComponent(hiddenAddressVal)}" class="info-btn">More Info</a></td>`;
